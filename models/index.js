@@ -44,6 +44,18 @@ const ArticleSchema = new Schema({
     // 记录创建时间和修改时间
     timestamps:true
 })
+// 文章关联一对多(一篇文章查出该文章所有的评论)
+// 用虚拟字段virtual
+ArticleSchema.virtual("coms",{
+    ref: "Comment",
+    localField: "_id",//用当前文章的id 关联评论表里article_id
+    foreignField: "article_id",
+    justOne: false,//全部评论
+    // count: true //若为true则只显示数组长度，不显示数组内容
+})
+// 下面这两句必须要写，这样虚拟字段才可以显性看到
+ArticleSchema.set("toObject", {virtuals:true})
+ArticleSchema.set("toJSON", {virtuals:true})
 
 const Article = mongoose.model('Article',ArticleSchema)
 
