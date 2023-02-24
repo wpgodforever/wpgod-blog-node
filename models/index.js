@@ -13,9 +13,6 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-},{
-    // 记录创建时间和修改时间
-    timestamps:true
 })
 
 const User = mongoose.model('User',UserSchema)
@@ -79,7 +76,7 @@ const CommentSchema = new Schema(
         }
     },
     {
-        // 记录创建时间和修改时间
+        // 记录创建时间和修改时间  
         timestamps:true
     }
 )
