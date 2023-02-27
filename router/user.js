@@ -23,7 +23,7 @@ router.post('/register',(req, res) =>{
     User.findOne({username}).then(data => {
 
         if(data){
-            responseClient(res,400,1,'用户名重复')
+            responseClient(res,400,1,'该用户名已被占用')
             return
         }
         User.create({
