@@ -12,7 +12,7 @@ const { expressjwt } = require('./lib/expressJwt')
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 //----------------------------------------
-// 接口token验证
+// 接口token验证  过期token验证
 app.use(expressjwt)
 //----------------------------------------
 app.use('/user',user)
@@ -27,11 +27,12 @@ app.get('/',(req, res) => {
 app.use((err, req, res, next) => {
     console.log('错误名',err)
     if(err.name === "UnauthorizedError"){
-        res.status(401)
+        res.status(401) 
         .json({
             code:0,
-            msg:"无效token,请重新登录"
+            msg:"token已过期,请重新登录"
         })
+        return
     }else{
         next(err)
     }

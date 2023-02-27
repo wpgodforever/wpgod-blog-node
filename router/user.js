@@ -1,11 +1,9 @@
 const express = require('express')
-
+const { createToken } = require('../lib/token')
 const app = express()
 const router = express.Router()
 const { User } = require('../models/user')
 const { responseClient } = require('../lib/request')
-// 引入jwt
-const  jwt = require('jsonwebtoken')
 
 
 // 用户注册接口
@@ -62,18 +60,7 @@ router.get('/login',(req,res) =>{
                 responseClient(res,400,1,'密码错误')
                 return
             }
-            // jwt生成token 
-            // let token = jwt.sign({请求里的信息},加密密码，{expiresIn过期时间，algorithm加密方式})
-            // res.json({
-            //     code:200,
-            //     msg:'注册成功',
-            //     token
-            // })
-            // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IndwIiwiaWF0IjoxNjc3NDE1OTIyLCJleHAiOjE2Nzc0MTY1MjJ9.Bg0I_6L5BOXp_l9mHTzw5ZuSR7K72CjCTt-5tUCZOiQ
-            let token = jwt.sign({username, password},'wp124',{
-                expiresIn:'6000s',
-                algorithm: 'HS256'
-            })
+            let token = createToken({username, password})
             res.json({
                 code:200,
                 msg:'登录成功',
