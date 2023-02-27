@@ -1,7 +1,9 @@
-// 用于定义数据表结构
-const mongoose = require('mongoose')
+//----------------------------------------
+const mongodb = require('../lib/mongoDB')
+// 连接数据库
+mongodb.connect()
 // 创建表模块
-let Schema = mongoose.Schema
+let Schema = mongodb.mongoose.Schema
 
 // 新增用户表
 const UserSchema = new Schema({
@@ -15,7 +17,7 @@ const UserSchema = new Schema({
     },
 })
 
-const User = mongoose.model('User',UserSchema)
+const User = mongodb.mongoose.model('User',UserSchema)
 
 // 新增文章表
 const ArticleSchema = new Schema({
@@ -54,7 +56,7 @@ ArticleSchema.virtual("coms",{
 ArticleSchema.set("toObject", {virtuals:true})
 ArticleSchema.set("toJSON", {virtuals:true})
 
-const Article = mongoose.model('Article',ArticleSchema)
+const Article = mongodb.mongoose.model('Article',ArticleSchema)
 
 // 新增评论表
 const CommentSchema = new Schema(
@@ -81,7 +83,7 @@ const CommentSchema = new Schema(
     }
 )
 
-const Comment = mongoose.model('Comment',CommentSchema)
+const Comment = mongodb.mongoose.model('Comment',CommentSchema)
 
 module.exports = {
     Article,

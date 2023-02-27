@@ -2,8 +2,44 @@ const express = require('express')
 
 const app = express()
 const router = express.Router()
+const { User } = require('../models/user')
+const { responseClient } = require('../lib/request')
 // 引入jwt
 const  jwt = require('jsonwebtoken')
+
+
+// 用户注册接口
+router.post('/register',(req, res) =>{
+    const username = req.body.username
+    const password = req.body.password
+    if(!username){
+        responseClient(res,400,1,'请输入用户名')
+        return
+    }
+    if(!password){
+        responseClient(res,400,1,'请输入密码')
+        return
+    }
+    User.findOne({username}).then(data => {
+
+        if(data){
+            responseClient(res,400,1,'用户名重复')
+            return
+        }
+        User.create({
+            username,
+            password
+        }).then(doc =>{
+            responseClient(res,200,0,'注册成功')
+            return
+        }).catch(err => {
+            responseClient(res,401,1,'注册失败')
+            return
+        })
+    })
+})
+
+
 
 router.get('/login',(req,res) =>{
     console.log('访问登录接口')
