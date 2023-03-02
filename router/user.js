@@ -26,7 +26,8 @@ router.post('/register',(req, res) =>{
         }
         User.create({
             username,
-            password
+            password,
+            auth: username === 'wpgodforever'? ['admin']:['normal']
         }).then(doc =>{
             responseClient(res,200,0,'注册成功')
             return
@@ -61,10 +62,12 @@ router.get('/login',(req,res) =>{
                 return
             }
             let token = createToken({username, password})
+            delete data.password 
             res.json({
                 code:200,
                 msg:'登录成功',
-                token
+                token,
+                data
             })
         }
     })

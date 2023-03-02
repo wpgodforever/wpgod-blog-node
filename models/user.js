@@ -15,6 +15,11 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
+    // 用户权限  admin  normal
+    auth: {
+        type: Array,
+        default: ['normal'],
+    },
 })
 
 const User = mongodb.mongoose.model('User',UserSchema)
