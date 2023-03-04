@@ -1,12 +1,15 @@
 const express = require('express')
 
 const app = express()
-
+let cors = require('cors'); //引入cors库
 const bodyParser = require('body-parser')
 // 引入user模块
 const user = require('./router/user')
 // 引入jwt校验模块
 const { expressjwt } = require('./lib/expressJwt')
+//----------------------------------------
+// 用于处理跨域
+app.use(cors())
 //----------------------------------------
 // 用于解析post请求
 app.use(bodyParser.json())
@@ -16,12 +19,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressjwt)
 //----------------------------------------
 app.use('/user',user)
-app.get('/',(req, res) => {
-    res.json({
-        code:200,
-        msg:'成功'
-    })
-})
+// app.get('/',(req, res) => {
+//     res.setHeader('Access-Control-Allow-Origin', '*')
+//     res.json({
+//         code:200,
+//         msg:'成功'
+//     })
+// })
 
 // jwt错误捕获
 app.use((err, req, res, next) => {
@@ -34,7 +38,8 @@ app.use((err, req, res, next) => {
         })
         return
     }else{
-        next(err)
+        console.log(err,'err')
+        res.send(err)
     }
 })
 
