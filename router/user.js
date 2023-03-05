@@ -62,9 +62,11 @@ router.get('/login',(req,res) =>{
                 return
             }
             let token = createToken({username, password})
+            data = data.toObject()
             delete data.password 
             responseClient(res,200,200,'登录成功',{
-                token
+                token,
+                ...data
             })
         }
     })
