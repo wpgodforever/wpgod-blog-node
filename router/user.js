@@ -48,26 +48,23 @@ router.get('/login',(req,res) =>{
         return
     }
     if(!password){
-        responseClient(res,400,1,'请输入密码')
+        responseClient(res,200,1,'请输入密码')
         return
     }
     User.findOne({
         username
     }).then(data => {
         if(!data){
-            responseClient(res,400,1,'该用户不存在')
+            responseClient(res,200,1,'该用户不存在')
         }else{
             if(data.password !== password){
-                responseClient(res,400,1,'密码错误')
+                responseClient(res,200,1,'密码错误')
                 return
             }
             let token = createToken({username, password})
             delete data.password 
-            res.json({
-                code:200,
-                msg:'登录成功',
-                token,
-                data
+            responseClient(res,200,200,'登录成功',{
+                token
             })
         }
     })
