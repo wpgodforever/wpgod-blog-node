@@ -27,7 +27,7 @@ router.post('/register',(req, res) =>{
         User.create({
             username,
             password,
-            auth: username === 'wpgodforever'? ['admin']:['normal']
+            auth: ['normal']
         }).then(doc =>{
             responseClient(res,200,200,'注册成功')
             return
