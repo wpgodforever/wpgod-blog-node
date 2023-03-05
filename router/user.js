@@ -11,17 +11,17 @@ router.post('/register',(req, res) =>{
     const username = req.body.username
     const password = req.body.password
     if(!username){
-        responseClient(res,400,1,'请输入用户名')
+        responseClient(res,200,1,'请输入用户名')
         return
     }
     if(!password){
-        responseClient(res,400,1,'请输入密码')
+        responseClient(res,200,1,'请输入密码')
         return
     }
     User.findOne({username}).then(data => {
 
         if(data){
-            responseClient(res,400,1,'该用户名已被占用')
+            responseClient(res,200,1,'该用户名已被占用')
             return
         }
         User.create({
@@ -29,10 +29,10 @@ router.post('/register',(req, res) =>{
             password,
             auth: username === 'wpgodforever'? ['admin']:['normal']
         }).then(doc =>{
-            responseClient(res,200,0,'注册成功')
+            responseClient(res,200,200,'注册成功')
             return
         }).catch(err => {
-            responseClient(res,401,1,'注册失败')
+            responseClient(res,200,1,'注册失败')
             return
         })
     })
