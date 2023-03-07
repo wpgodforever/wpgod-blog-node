@@ -5,6 +5,8 @@ let cors = require('cors'); //引入cors库
 const bodyParser = require('body-parser')
 // 引入user模块
 const user = require('./router/user')
+// 引入文章模块
+const article = require('./router/article')
 // 引入jwt校验模块
 const { expressjwt } = require('./lib/expressJwt')
 //----------------------------------------
@@ -19,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressjwt)
 //----------------------------------------
 app.use('/user',user)
+app.use('/article',article)
 // app.get('/',(req, res) => {
 //     res.setHeader('Access-Control-Allow-Origin', '*')
 //     res.json({
