@@ -11,7 +11,7 @@ const  multer = require('multer')
 // let upload = multer({ storage: storage });
 let upload = multer({ dest: 'public/uploadImg/' });
 
-// 上传图片
+// 上传图片接口  -------------------------------------------
 //upload.single("coverImg")  单文件
 //upload.array("coverImg",8)  走多文件上传
 // coverImg为前端上传时表单对应的字段
@@ -26,5 +26,6 @@ router.post('/uploadImg',upload.single("file",8),(req, res) =>{
         url:`${baseUrl}:${port}/public/uploadImg/${req.file.filename}.${appendName}`
     })
 })
+
 
 module.exports = router

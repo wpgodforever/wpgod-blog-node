@@ -22,13 +22,6 @@ app.use(expressjwt)
 //----------------------------------------
 app.use('/user',user)
 app.use('/article',article)
-// app.get('/',(req, res) => {
-//     res.setHeader('Access-Control-Allow-Origin', '*')
-//     res.json({
-//         code:200,
-//         msg:'成功'
-//     })
-// })
 
 // jwt错误捕获
 app.use((err, req, res, next) => {

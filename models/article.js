@@ -51,6 +51,16 @@ ArticleSchema.set("toJSON", {virtuals:true})
 
 const Article = mongodb.mongoose.model('Article',ArticleSchema)
 
+// 新增标签表
+const TagSchema = new Schema({
+    tag:{
+        type: String,
+        required: true,
+    }
+})
+const Tags = mongodb.mongoose.model('Tags',TagSchema)
+
 module.exports = {
-    Article
+    Article,
+    Tags
 }
