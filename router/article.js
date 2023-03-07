@@ -1,4 +1,5 @@
 const express = require('express')
+const { port, baseUrl } = require('../lib/config')
 const fs=require('fs')
 const app = express()
 const router = express.Router()
@@ -22,7 +23,7 @@ router.post('/uploadImg',upload.single("file",8),(req, res) =>{
     })
     // console.log(req.file,req.files);
     responseClient(res,200,200,'上传成功',{
-        url:`http://172.0.0.1:1244/public/uploadImg/${req.file.filename}.${appendName}`
+        url:`${baseUrl}:${port}/public/uploadImg/${req.file.filename}.${appendName}`
     })
 })
 

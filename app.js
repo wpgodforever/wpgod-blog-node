@@ -1,5 +1,5 @@
 const express = require('express')
-
+const { port, baseUrl } = require('./lib/config')
 const app = express()
 let cors = require('cors'); //引入cors库
 const bodyParser = require('body-parser')
@@ -45,6 +45,6 @@ app.use((err, req, res, next) => {
     }
 })
 
-app.listen(1244,() => {
-    console.log('node启动成功，端口为1244')
+app.listen(port,() => {
+    console.log(`node启动成功，端口为${port}`)
 })
