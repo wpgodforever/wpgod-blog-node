@@ -27,7 +27,7 @@ app.use('/article',article)
 app.use((err, req, res, next) => {
     console.log('错误名',err)
     if(err.name === "UnauthorizedError"){
-        res.status(401) 
+        res.status(200) 
         .json({
             code:401,
             msg:"token已过期,请重新登录"

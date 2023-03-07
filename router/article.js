@@ -27,5 +27,10 @@ router.post('/uploadImg',upload.single("file",8),(req, res) =>{
     })
 })
 
+// 发布文章接口
+router.post('/post',(req, res) => {
+    console.log(req.body)
+})
+
 
 module.exports = router
