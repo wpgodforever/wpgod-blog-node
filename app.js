@@ -25,7 +25,6 @@ app.use('/article',article)
 
 // jwt错误捕获
 app.use((err, req, res, next) => {
-    console.log('错误名',err)
     if(err.name === "UnauthorizedError"){
         res.status(200) 
         .json({

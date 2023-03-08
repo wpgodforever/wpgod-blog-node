@@ -3,8 +3,9 @@ const { port, baseUrl } = require('../lib/config')
 const fs=require('fs')
 const app = express()
 const router = express.Router()
-const { Article } = require('../models/article')
+const { Article, Tags } = require('../models/article')
 const { responseClient } = require('../lib/request')
+const { isAdmin } = require('../lib/middleware')
 //引入multer模块
 const  multer = require('multer')
 //创建上传对象
@@ -28,8 +29,24 @@ router.post('/uploadImg',upload.single("file",8),(req, res) =>{
 })
 
 // 发布文章接口
-router.post('/post',(req, res) => {
+router.post('/post',isAdmin, (req, res) => {
     console.log(req.body)
+    const { title, tags, desc, cover, text } = req.body
+    // 先看看文章标签表里面有没有新增的没有的标签
+    Tags.find({},{_id:0,__v:0},{ lean: true }).then( tagRes =>{
+        
+        let tagResArry = tagRes.map(v => v.tag)
+        tags.forEach( tagResItem => {
+            if(!tagResArry.includes(tagResItem)){
+                Tags.create({
+                    tag: tagResItem
+                })
+            }
+        })
+    }).then(() =>{
+        responseClient(res,200,200,'发布成功')
+    })
+    
 })
 
 
