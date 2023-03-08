@@ -21,10 +21,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressjwt)
 //----------------------------------------
 app.use('/user',user)
-app.use('/article',article)
+app.use('/api/article',article)
 
 // jwt错误捕获
 app.use((err, req, res, next) => {
+    console.log(err)
     if(err.name === "UnauthorizedError"){
         res.status(200) 
         .json({
