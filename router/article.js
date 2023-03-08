@@ -23,8 +23,16 @@ router.post('/uploadImg',upload.single("file",8),(req, res) =>{
         if (err) throw err
     })
     // console.log(req.file,req.files);
-    responseClient(res,200,200,'上传成功',{
-        url:`${baseUrl}:${port}/public/uploadImg/${req.file.filename}.${appendName}`
+    // responseClient(res,200,200,'上传成功',{
+    //     url:`${baseUrl}:${port}/public/uploadImg/${req.file.filename}.${appendName}`
+    // })
+    res.set('content-type', 'multipart/form-data');
+    res.send({
+        code:200,
+        msg:'上传成功',
+        data:{
+            url:`${baseUrl}:${port}/public/uploadImg/${req.file.filename}.${appendName}`
+        }
     })
 })
 

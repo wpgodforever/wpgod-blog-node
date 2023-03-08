@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressjwt)
 //----------------------------------------
 app.use('/user',user)
-app.use('/api/article',article)
+app.use('/article',article)
 
 // jwt错误捕获
 app.use((err, req, res, next) => {
