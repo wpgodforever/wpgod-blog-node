@@ -13,7 +13,7 @@ const  multer = require('multer')
 const MAO = require('multer-aliyun-oss');//npm install --save multer-aliyun-oss
 //创建上传对象----------------------------------------------------
 // let upload = multer({ dest: 'public/uploadImg/' });
-// 阿里云上传图片使用
+// 阿里云上传文章详情图片使用
 const upload = multer({
     storage: MAO({
          config: {
@@ -22,16 +22,16 @@ const upload = multer({
              accessKeySecret: accessKeySecret,
              bucket: 'wpbucket124'
          },
-         destination: 'public/images'
+         destination: 'public/images/detail'
      })
   });
 
 
-// 上传图片接口  -------------------------------------------
+// 文章详情上传图片接口  -------------------------------------------
 //upload.single("coverImg")  单文件
 //upload.array("coverImg",8)  走多文件上传
 // coverImg为前端上传时表单对应的字段
-router.post('/uploadImg',upload.single("file"),(req, res) =>{
+router.post('/uploadImg/detail',upload.single("file"),(req, res) =>{
     // 本地上传---------------------------
     // //获取文件后缀名
     // const appendName=req.file.originalname.split('.')[1]
@@ -52,7 +52,31 @@ router.post('/uploadImg',upload.single("file"),(req, res) =>{
     res.send({
         status: '上传成功',
         code: 200,
-        url: `https://wpbucket124.oss-cn-guangzhou.aliyuncs.com/public/images/${file.filename}`
+        url: `https://wpbucket124.oss-cn-guangzhou.aliyuncs.com/public/images/detail/${file.filename}`
+    });
+})
+// 阿里云上传文章详情图片使用
+const uploadCover = multer({
+    storage: MAO({
+         config: {
+             region:'oss-cn-guangzhou',
+             accessKeyId: accessKeyId,
+             accessKeySecret: accessKeySecret,
+             bucket: 'wpbucket124'
+         },
+         destination: 'public/images/cover'
+     })
+  });
+
+
+// 文章封面上传图片接口  -------------------------------------------
+router.post('/uploadImg/cover',uploadCover.single("file"),(req, res) =>{
+    const file = req.file;
+    console.log(file);
+    res.send({
+        status: '上传成功',
+        code: 200,
+        url: `https://wpbucket124.oss-cn-guangzhou.aliyuncs.com/public/images/cover/${file.filename}`
     });
 })
 
