@@ -120,7 +120,11 @@ router.get('/detail',(req, res) => {
 // 文章列表接口
 router.get('/list',(req, res) => {
     const { pageSize=10, pageNo=1, tags=[] } = req.query
-    Article.find({...req.query}).then((articleRes, articleReq) => {
+    let query = {}
+    if(tags.length){
+        query.tags = tags
+    }
+    Article.find(query).then((articleRes, articleReq) => {
         if(!articleRes) return responseClient(res,200,400,'没找到该文章')
         responseClient(res,200,200,'查询成功',articleRes)
     })
