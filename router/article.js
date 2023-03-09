@@ -48,7 +48,6 @@ router.post('/uploadImg/detail',upload.single("file"),(req, res) =>{
     // 阿里云OSS上传-------------------------------
     // 可以自定义返回结果，推荐打印 req.file 查看，再决定如何返回数据给前端
     const file = req.file;
-    console.log(file);
     res.send({
         status: '上传成功',
         code: 200,
@@ -72,7 +71,6 @@ const uploadCover = multer({
 // 文章封面上传图片接口  -------------------------------------------
 router.post('/uploadImg/cover',uploadCover.single("file"),(req, res) =>{
     const file = req.file;
-    console.log(file);
     res.send({
         status: '上传成功',
         code: 200,
@@ -83,7 +81,7 @@ router.post('/uploadImg/cover',uploadCover.single("file"),(req, res) =>{
 // 发布文章接口
 router.post('/post',isAdmin, (req, res) => {
     console.log(req.body)
-    const { title, tags, desc, cover, text } = req.body
+    const { title, tags, desc, cover, text, author } = req.body
     // 先看看文章标签表里面有没有新增的没有的标签
     Tags.find({},{_id:0,__v:0},{ lean: true }).then( tagRes =>{
         
@@ -96,7 +94,19 @@ router.post('/post',isAdmin, (req, res) => {
             }
         })
     }).then(() =>{
-        responseClient(res,200,200,'发布成功')
+        Article.create({
+            title,
+            tags,
+            desc,
+            cover,
+            text,
+            author,
+        }).then(articleRes => {
+            responseClient(res,200,200,'发布成功')
+        }).catch(err => {
+            responseClient(res,200,400,err)
+        })
+        
     })
     
 })
