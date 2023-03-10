@@ -126,15 +126,21 @@ router.get('/list',async(req, res) => {
     // 获取前端传来想查的标签
     const tagsArrNew = tags?tags.split(',') : []
     // 因为有可能是查询全部，tags可能为空，所以做一个3元判断
+    // 分页
+    // .skip((+pageNo -1)*(+pageSize)).limit(+pageSize)
     Article.find({
         tags:{$in:(tagsArrNew.length?tagsArrNew:tagsArr1)}
         },{
             title:1,
             tags:1,
             updatedAt:1,
-        }).skip((+pageNo -1)*(+pageSize)).limit(+pageSize).then((articleRes, articleReq) => {
+        }).then((articleRes, articleReq) => {
         if(!articleRes) return responseClient(res,200,400,'没找到该文章')
-        responseClient(res,200,200,'查询成功',articleRes)
+        responseClient(res,200,200,'查询成功',
+        {
+           list:[...articleRes],
+           tagsNum:tagsArr.length
+        })
     })
 })
 
