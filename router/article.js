@@ -128,7 +128,11 @@ router.get('/list',async(req, res) => {
     // 因为有可能是查询全部，tags可能为空，所以做一个3元判断
     Article.find({
         tags:{$in:(tagsArrNew.length?tagsArrNew:tagsArr1)}
-        }).then((articleRes, articleReq) => {
+        },{
+            title:1,
+            tags:1,
+            updatedAt:1,
+        }).skip((pageSize -1)*pageNo).limit(pageSize).then((articleRes, articleReq) => {
         if(!articleRes) return responseClient(res,200,400,'没找到该文章')
         responseClient(res,200,200,'查询成功',articleRes)
     })
