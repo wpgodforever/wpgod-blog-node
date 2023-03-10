@@ -132,8 +132,9 @@ router.get('/list',async(req, res) => {
             title:1,
             tags:1,
             updatedAt:1,
-        }).skip((pageSize -1)*pageNo).limit(pageSize).then((articleRes, articleReq) => {
+        }).skip((+pageNo -1)*(+pageSize)).limit(+pageSize).then((articleRes, articleReq) => {
         if(!articleRes) return responseClient(res,200,400,'没找到该文章')
+        console.log(articleRes)
         responseClient(res,200,200,'查询成功',articleRes)
     })
 })
