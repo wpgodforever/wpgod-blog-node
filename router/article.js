@@ -118,13 +118,17 @@ router.get('/detail',(req, res) => {
 })
 
 // 文章列表接口
-router.get('/list',(req, res) => {
-    const { pageSize=10, pageNo=1, tags=[] } = req.query
-    let query = {}
-    if(tags.length){
-        query.tags = tags
-    }
-    Article.find(query).then((articleRes, articleReq) => {
+router.get('/list',async(req, res) => {
+    const { pageSize=10, pageNo=1, tags='' } = req.query
+    // 查询出已有的所有标签
+    const tagsArr = await Tags.find({},{_id:0,__v:0},{ lean: true })
+    const tagsArr1 = tagsArr.map(v => v.tag)
+    // 获取前端传来想查的标签
+    const tagsArrNew = tags?tags.split(',') : []
+    // 因为有可能是查询全部，tags可能为空，所以做一个3元判断
+    Article.find({
+        tags:{$in:(tagsArrNew.length?tagsArrNew:tagsArr1)}
+        }).then((articleRes, articleReq) => {
         if(!articleRes) return responseClient(res,200,400,'没找到该文章')
         responseClient(res,200,200,'查询成功',articleRes)
     })
