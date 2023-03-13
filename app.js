@@ -22,6 +22,11 @@ app.use(expressjwt)
 //----------------------------------------
 app.use('/user',user)
 app.use('/article',article)
+app.get('/',(req,res)=>{
+    res.json({
+        msg:'部署成功测试'
+    })
+})
 
 // jwt错误捕获
 app.use((err, req, res, next) => {
@@ -40,4 +45,5 @@ app.use((err, req, res, next) => {
 
 app.listen(port,() => {
     console.log(`node启动成功，端口为${port}`)
+    console.log(`node部署成功，端口为${port}`)
 })

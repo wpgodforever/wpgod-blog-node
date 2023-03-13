@@ -109,6 +109,36 @@ router.post('/post',isAdmin, (req, res) => {
     })
 })
 
+// 更新文章接口
+router.post('/update',isAdmin, (req, res) => {
+    const { title, tags, desc, cover, text, id } = req.body
+    // 先看看文章标签表里面有没有新增的没有的标签
+    Tags.find({},{_id:0,__v:0},{ lean: true }).then( tagRes =>{
+        
+        let tagResArry = tagRes.map(v => v.tag)
+        tags.forEach( tagResItem => {
+            if(!tagResArry.includes(tagResItem)){
+                Tags.create({
+                    tag: tagResItem
+                })
+            }
+        })
+    }).then(() =>{
+        Article.findOneAndUpdate(id,{
+            title,
+            tags,
+            desc,
+            cover,
+            text,
+        }).then(articleRes => {
+            console.log(articleRes,'------------------')
+            responseClient(res,200,200,'更新成功')
+        }).catch(err => {
+            responseClient(res,200,400,err)
+        })
+    })
+})
+
 // 文章详情接口
 router.get('/detail',(req, res) => {
     Article.find({...req.query}).then((articleRes, articleReq) => {
