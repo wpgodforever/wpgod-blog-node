@@ -124,7 +124,7 @@ router.post('/update',isAdmin, (req, res) => {
             }
         })
     }).then(() =>{
-        Article.findOneAndUpdate(id,{
+        Article.findOneAndUpdate({_id:id},{
             title,
             tags,
             desc,
@@ -136,6 +136,17 @@ router.post('/update',isAdmin, (req, res) => {
         }).catch(err => {
             responseClient(res,200,400,err)
         })
+    })
+})
+
+// 删除文章接口
+router.post('/delete',isAdmin, (req, res) => {
+    const { id } = req.body
+    Article.deleteOne({_id:id}).then(articleRes => {
+        console.log(articleRes,'------------------')
+        responseClient(res,200,200,'删除成功')
+    }).catch(err => {
+        responseClient(res,200,400,err)
     })
 })
 
