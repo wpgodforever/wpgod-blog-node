@@ -175,6 +175,7 @@ router.get('/list',async(req, res) => {
             title:1,
             tags:1,
             updatedAt:1,
+            createdAt:1,
         }).then((articleRes, articleReq) => {
         if(!articleRes) return responseClient(res,200,400,'没找到该文章')
         responseClient(res,200,200,'查询成功',
