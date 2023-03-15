@@ -24,35 +24,6 @@ const UserSchema = new Schema({
 
 const User = mongodb.mongoose.model('User',UserSchema)
 
-
-// 新增评论表
-const CommentSchema = new Schema(
-    {
-        content: {
-            type: String,
-            required: true,
-        },
-        article_id: {
-            type:Schema.Types.ObjectId,
-            required: true,
-            ref: 'Article'
-        },
-        // 回复的人的id
-        reply_user_id:{
-            type:Schema.Types.ObjectId,
-            required: true,
-            ref: 'User'
-        }
-    },
-    {
-        // 记录创建时间和修改时间  
-        timestamps:true
-    }
-)
-
-const Comment = mongodb.mongoose.model('Comment',CommentSchema)
-
 module.exports = {
-    User,
-    Comment
+    User
 }
