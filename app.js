@@ -7,6 +7,8 @@ const bodyParser = require('body-parser')
 const user = require('./router/user')
 // 引入文章模块
 const article = require('./router/article')
+// 引入评论模块
+const comment = require('./router/comment')
 // 引入jwt校验模块
 const { expressjwt } = require('./lib/expressJwt')
 //----------------------------------------
@@ -22,6 +24,7 @@ app.use(expressjwt)
 //----------------------------------------
 app.use('/user',user)
 app.use('/article',article)
+app.use('/comment',comment)
 app.get('/',(req,res)=>{
     res.json({
         msg:'部署成功测试'

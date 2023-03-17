@@ -151,8 +151,9 @@ router.post('/delete',isAdmin, (req, res) => {
 })
 
 // 文章详情接口
+// populate方法可以关联查询改表的虚拟字段，这里有评论的虚拟字段，要查出来
 router.get('/detail',(req, res) => {
-    Article.find({...req.query}).then((articleRes, articleReq) => {
+    Article.find({...req.query}).populate('author','username').populate('coms').then((articleRes, articleReq) => {
         if(!articleRes) return responseClient(res,200,400,'没找到该文章')
         responseClient(res,200,200,'查询成功',articleRes)
     }).catch(err => {
