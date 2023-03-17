@@ -1,6 +1,6 @@
 const express = require('express')
 const { port, baseUrl } = require('../lib/config')
-const fs=require('fs')
+const fs = require('fs')
 const app = express()
 const router = express.Router()
 const { Article, Tags } = require('../models/article')
@@ -8,7 +8,7 @@ const { responseClient } = require('../lib/request')
 const { isAdmin } = require('../lib/middleware')
 const { accessKeyId, accessKeySecret } = require('../ossConfig')
 //引入multer模块
-const  multer = require('multer')
+const multer = require('multer')
 // 阿里云OSS 相关-+-------------------------------------
 const MAO = require('multer-aliyun-oss');//npm install --save multer-aliyun-oss
 //创建上传对象----------------------------------------------------
@@ -16,22 +16,22 @@ const MAO = require('multer-aliyun-oss');//npm install --save multer-aliyun-oss
 // 阿里云上传文章详情图片使用
 const upload = multer({
     storage: MAO({
-         config: {
-             region:'oss-cn-guangzhou',
-             accessKeyId: accessKeyId,
-             accessKeySecret: accessKeySecret,
-             bucket: 'wpbucket124'
-         },
-         destination: 'public/images/detail'
-     })
-  });
+        config: {
+            region: 'oss-cn-guangzhou',
+            accessKeyId: accessKeyId,
+            accessKeySecret: accessKeySecret,
+            bucket: 'wpbucket124'
+        },
+        destination: 'public/images/detail'
+    })
+});
 
 
 // 文章详情上传图片接口  -------------------------------------------
 //upload.single("coverImg")  单文件
 //upload.array("coverImg",8)  走多文件上传
 // coverImg为前端上传时表单对应的字段
-router.post('/uploadImg/detail',upload.single("file"),(req, res) =>{
+router.post('/uploadImg/detail', upload.single("file"), (req, res) => {
     // 本地上传---------------------------
     // //获取文件后缀名
     // const appendName=req.file.originalname.split('.')[1]
@@ -57,19 +57,19 @@ router.post('/uploadImg/detail',upload.single("file"),(req, res) =>{
 // 阿里云上传文章详情图片使用
 const uploadCover = multer({
     storage: MAO({
-         config: {
-             region:'oss-cn-guangzhou',
-             accessKeyId: accessKeyId,
-             accessKeySecret: accessKeySecret,
-             bucket: 'wpbucket124'
-         },
-         destination: 'public/images/cover'
-     })
-  });
+        config: {
+            region: 'oss-cn-guangzhou',
+            accessKeyId: accessKeyId,
+            accessKeySecret: accessKeySecret,
+            bucket: 'wpbucket124'
+        },
+        destination: 'public/images/cover'
+    })
+});
 
 
 // 文章封面上传图片接口  -------------------------------------------
-router.post('/uploadImg/cover',uploadCover.single("file"),(req, res) =>{
+router.post('/uploadImg/cover', uploadCover.single("file"), (req, res) => {
     const file = req.file;
     res.send({
         status: '上传成功',
@@ -79,21 +79,21 @@ router.post('/uploadImg/cover',uploadCover.single("file"),(req, res) =>{
 })
 
 // 发布文章接口
-router.post('/post',isAdmin, (req, res) => {
+router.post('/post', isAdmin, (req, res) => {
     console.log(req.body)
     const { title, tags, desc, cover, text, author } = req.body
     // 先看看文章标签表里面有没有新增的没有的标签
-    Tags.find({},{_id:0,__v:0},{ lean: true }).then( tagRes =>{
-        
+    Tags.find({}, { _id: 0, __v: 0 }, { lean: true }).then(tagRes => {
+
         let tagResArry = tagRes.map(v => v.tag)
-        tags.forEach( tagResItem => {
-            if(!tagResArry.includes(tagResItem)){
+        tags.forEach(tagResItem => {
+            if (!tagResArry.includes(tagResItem)) {
                 Tags.create({
                     tag: tagResItem
                 })
             }
         })
-    }).then(() =>{
+    }).then(() => {
         Article.create({
             title,
             tags,
@@ -102,91 +102,99 @@ router.post('/post',isAdmin, (req, res) => {
             text,
             author,
         }).then(articleRes => {
-            responseClient(res,200,200,'发布成功')
+            responseClient(res, 200, 200, '发布成功')
         }).catch(err => {
-            responseClient(res,200,400,err)
+            responseClient(res, 200, 400, err)
         })
     })
 })
 
 // 更新文章接口
-router.post('/update',isAdmin, (req, res) => {
+router.post('/update', isAdmin, (req, res) => {
     const { title, tags, desc, cover, text, id } = req.body
     // 先看看文章标签表里面有没有新增的没有的标签
-    Tags.find({},{_id:0,__v:0},{ lean: true }).then( tagRes =>{
-        
+    Tags.find({}, { _id: 0, __v: 0 }, { lean: true }).then(tagRes => {
+
         let tagResArry = tagRes.map(v => v.tag)
-        tags.forEach( tagResItem => {
-            if(!tagResArry.includes(tagResItem)){
+        tags.forEach(tagResItem => {
+            if (!tagResArry.includes(tagResItem)) {
                 Tags.create({
                     tag: tagResItem
                 })
             }
         })
-    }).then(() =>{
-        Article.findOneAndUpdate({_id:id},{
+    }).then(() => {
+        Article.findOneAndUpdate({ _id: id }, {
             title,
             tags,
             desc,
             cover,
             text,
         }).then(articleRes => {
-            console.log(articleRes,'------------------')
-            responseClient(res,200,200,'更新成功')
+            console.log(articleRes, '------------------')
+            responseClient(res, 200, 200, '更新成功')
         }).catch(err => {
-            responseClient(res,200,400,err)
+            responseClient(res, 200, 400, err)
         })
     })
 })
 
 // 删除文章接口
-router.post('/delete',isAdmin, (req, res) => {
+router.post('/delete', isAdmin, (req, res) => {
     const { id } = req.body
-    Article.deleteOne({_id:id}).then(articleRes => {
-        console.log(articleRes,'------------------')
-        responseClient(res,200,200,'删除成功')
+    Article.deleteOne({ _id: id }).then(articleRes => {
+        console.log(articleRes, '------------------')
+        responseClient(res, 200, 200, '删除成功')
     }).catch(err => {
-        responseClient(res,200,400,err)
+        responseClient(res, 200, 400, err)
     })
 })
 
 // 文章详情接口
 // populate方法可以关联查询改表的虚拟字段，这里有评论的虚拟字段，要查出来
-router.get('/detail',(req, res) => {
-    Article.find({...req.query}).populate('author','username').populate('coms').then((articleRes, articleReq) => {
-        if(!articleRes) return responseClient(res,200,400,'没找到该文章')
-        responseClient(res,200,200,'查询成功',articleRes)
+router.get('/detail', (req, res) => {
+    Article.find({ ...req.query }).populate('author', 'username').populate({
+        path: 'coms',
+        model: 'Comment',
+        populate: {
+            path: 'reply_user_id',
+            select: 'username',
+            model: 'User',
+        }
+    }).then((articleRes, articleReq) => {
+        if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
+        responseClient(res, 200, 200, '查询成功', articleRes)
     }).catch(err => {
-        responseClient(res,200,400,'错误',err)
+        responseClient(res, 200, 400, '错误', err)
     })
 })
 
 // 文章列表接口
-router.get('/list',async(req, res) => {
-    const { pageSize=10, pageNo=1, tags='' } = req.query
+router.get('/list', async (req, res) => {
+    const { pageSize = 10, pageNo = 1, tags = '' } = req.query
     // 查询出已有的所有标签
-    const tagsArr = await Tags.find({},{_id:0,__v:0},{ lean: true })
+    const tagsArr = await Tags.find({}, { _id: 0, __v: 0 }, { lean: true })
     const tagsArr1 = tagsArr.map(v => v.tag)
     // 获取前端传来想查的标签
-    const tagsArrNew = tags?tags.split(',') : []
+    const tagsArrNew = tags ? tags.split(',') : []
     // 因为有可能是查询全部，tags可能为空，所以做一个3元判断
     // 分页
     // .skip((+pageNo -1)*(+pageSize)).limit(+pageSize)
     Article.find({
-        tags:{$in:(tagsArrNew.length?tagsArrNew:tagsArr1)}
-        },{
-            title:1,
-            tags:1,
-            updatedAt:1,
-            createdAt:1,
-            cover:1,
-        }).then((articleRes, articleReq) => {
-        if(!articleRes) return responseClient(res,200,400,'没找到该文章')
-        responseClient(res,200,200,'查询成功',
-        {
-           list:[...articleRes],
-           tagsNum:tagsArr.length
-        })
+        tags: { $in: (tagsArrNew.length ? tagsArrNew : tagsArr1) }
+    }, {
+        title: 1,
+        tags: 1,
+        updatedAt: 1,
+        createdAt: 1,
+        cover: 1,
+    }).then((articleRes, articleReq) => {
+        if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
+        responseClient(res, 200, 200, '查询成功',
+            {
+                list: [...articleRes],
+                tagsNum: tagsArr.length
+            })
     })
 })
 
