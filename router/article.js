@@ -155,6 +155,8 @@ router.get('/detail',(req, res) => {
     Article.find({...req.query}).then((articleRes, articleReq) => {
         if(!articleRes) return responseClient(res,200,400,'没找到该文章')
         responseClient(res,200,200,'查询成功',articleRes)
+    }).catch(err => {
+        responseClient(res,200,400,'错误',err)
     })
 })
 
