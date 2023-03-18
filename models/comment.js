@@ -46,7 +46,7 @@ const Comment = mongodb.mongoose.model('Comment',CommentSchema)
 // 回复评论表
 const ReplySchema = new Schema(
     {
-        content: {//回复内容
+        replyContent: {//回复内容
             type: String,
             required: true,
         },
