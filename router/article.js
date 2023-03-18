@@ -156,6 +156,11 @@ router.get('/detail', (req, res) => {
     Article.find({ ...req.query }).populate('author', 'username').populate({
         path: 'coms',
         model: 'Comment',
+        options:{//排序  根据createdAt字段反向排序
+            sort:{
+                'createdAt':-1
+            }
+        },
         populate: {
             path: 'reply_user_id',
             select: 'username',
