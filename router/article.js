@@ -173,6 +173,15 @@ router.get('/detail', (req, res) => {
                         'createdAt':-1
                     }
                 },
+                populate:[{
+                    path: 'reply_user_id',
+                    select: 'username',
+                    model: 'User',
+                },{
+                    path: 'get_reply_user_id',
+                    select: 'username',
+                    model: 'User',
+                },]
             },{
                 path: 'reply_user_id',
                 select: 'username',

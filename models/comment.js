@@ -50,9 +50,13 @@ const ReplySchema = new Schema(
             type: String,
             required: true,
         },
-        reply_common_id: {//回复的那条评论的id
+        reply_common_id: {//这条回复属于哪条评论
             type:Schema.Types.ObjectId,
             required: true,
+            ref: 'Comment'
+        },
+        reply_who_id: {//这条回复回复了哪条回复
+            type:Schema.Types.ObjectId,
             ref: 'Comment'
         },
         // 回复的人的id
