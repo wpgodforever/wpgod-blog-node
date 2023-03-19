@@ -31,7 +31,7 @@ const CommentSchema = new Schema(
 )
 // 评论关联一对多(查出该条评论的所有回复)
 // 用虚拟字段virtual
-CommentSchema.virtual("coms",{
+CommentSchema.virtual("replys",{
     ref: "Reply",
     localField: "_id",//用当前评论的id 关联回复表里article_id
     foreignField: "reply_common_id",

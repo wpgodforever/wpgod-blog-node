@@ -153,20 +153,35 @@ router.post('/delete', isAdmin, (req, res) => {
 // 文章详情接口
 // populate方法可以关联查询改表的虚拟字段，这里有评论的虚拟字段，要查出来
 router.get('/detail', (req, res) => {
-    Article.find({ ...req.query }).populate('author', 'username').populate({
-        path: 'coms',
-        model: 'Comment',
-        options:{//排序  根据createdAt字段反向排序
-            sort:{
-                'createdAt':-1
-            }
+    //查出对应id的文章
+    // 再查出该文章下的所有评论
+    // 再根据每个评论的id查出对应的回复
+    Article.find({ ...req.query }).populate([
+        {
+            path: 'coms',
+            model: 'Comment',
+            options:{
+                sort:{
+                    'createdAt':-1
+                }
+            },
+            populate:[{
+                path: 'replys',
+                model: 'Reply',
+                options:{
+                    sort:{
+                        'createdAt':-1
+                    }
+                },
+            },{
+                path: 'reply_user_id',
+                select: 'username',
+                model: 'User',
+                
+            }]
         },
-        populate: {
-            path: 'reply_user_id',
-            select: 'username',
-            model: 'User',
-        }
-    }).then((articleRes, articleReq) => {
+    ])
+    .then((articleRes, articleReq) => {
         if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
         responseClient(res, 200, 200, '查询成功', articleRes)
     }).catch(err => {
