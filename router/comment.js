@@ -35,4 +35,38 @@ router.post('/reply',(req,res) => {
         responseClient(res,200,400,err)
     })
 })
+
+// 获取留言板评论接口
+router.get('/list',(req,res) => {
+    Comment.find({
+        article_id:null,
+    }).populate([{
+        path: 'replys',
+        model: 'Reply',
+        options:{
+            sort:{
+                'createdAt':-1
+            }
+        },
+        populate:[{
+            path: 'reply_user_id',
+            select: 'username',
+            model: 'User',
+        },{
+            path: 'get_reply_user_id',
+            select: 'username',
+            model: 'User',
+        },]
+    },{
+        path: 'reply_user_id',
+        select: 'username',
+        model: 'User',
+        
+    }]).then(commentRes => {
+        responseClient(res,200,200,'查询成功',commentRes)
+    }).catch(err => {
+        responseClient(res,200,400,err)
+    })
+})
+
 module.exports = router

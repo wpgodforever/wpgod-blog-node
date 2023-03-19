@@ -14,7 +14,6 @@ const CommentSchema = new Schema(
         },
         article_id: {
             type:Schema.Types.ObjectId,
-            required: true,
             ref: 'Article'
         },
         // 评论人的id
@@ -73,7 +72,6 @@ const ReplySchema = new Schema(
         },
         article_id: {//该回复在那个文章里
             type:Schema.Types.ObjectId,
-            required: true,
             ref: 'Article'
         },
     },
