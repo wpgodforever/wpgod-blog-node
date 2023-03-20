@@ -95,12 +95,7 @@ router.post('/post', isAdmin, (req, res) => {
         })
     }).then(() => {
         Article.create({
-            title,
-            tags,
-            desc,
-            cover,
-            text,
-            author,
+            ...req.body
         }).then(articleRes => {
             responseClient(res, 200, 200, '发布成功')
         }).catch(err => {
@@ -217,6 +212,8 @@ router.get('/list', async (req, res) => {
         updatedAt: 1,
         createdAt: 1,
         cover: 1,
+    }).sort({
+        'createdAt':-1
     }).then((articleRes, articleReq) => {
         if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
         responseClient(res, 200, 200, '查询成功',

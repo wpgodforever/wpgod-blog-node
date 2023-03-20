@@ -19,6 +19,10 @@ const ArticleSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref: 'User'
     },
+    // 是否置顶
+    isTop:{
+        default:0
+    },
     // 摘要
     desc: {
         type: String,
