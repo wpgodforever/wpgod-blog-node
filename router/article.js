@@ -81,7 +81,7 @@ router.post('/uploadImg/cover', uploadCover.single("file"), (req, res) => {
 // 发布文章接口
 router.post('/post', isAdmin, (req, res) => {
     console.log(req.body)
-    const { title, tags, desc, cover, text, author } = req.body
+    const { title, tags, desc, cover, text, author,isTop } = req.body
     // 先看看文章标签表里面有没有新增的没有的标签
     Tags.find({}, { _id: 0, __v: 0 }, { lean: true }).then(tagRes => {
 
@@ -207,11 +207,7 @@ router.get('/list', async (req, res) => {
     Article.find({
         tags: { $in: (tagsArrNew.length ? tagsArrNew : tagsArr1) }
     }, {
-        title: 1,
-        tags: 1,
-        updatedAt: 1,
-        createdAt: 1,
-        cover: 1,
+        author:0
     }).sort({
         'createdAt':-1
     }).then((articleRes, articleReq) => {
@@ -222,6 +218,16 @@ router.get('/list', async (req, res) => {
                 tagsNum: tagsArr.length
             })
     })
+})
+
+// 标签列表接口
+router.get('/tags', async (req, res) => {
+    // 查询出已有的所有标签
+    let tagsArr = await Tags.find({}, { _id: 0, __v: 0 }, { lean: true })
+    tagsArr = tagsArr.map(v => {
+        return v.tag
+    })
+    responseClient(res, 200, 200, '查询成功',tagsArr)
 })
 
 module.exports = router

@@ -21,7 +21,7 @@ const ArticleSchema = new Schema({
     },
     // 是否置顶
     isTop:{
-        default:0
+        type: Number || String
     },
     // 摘要
     desc: {
