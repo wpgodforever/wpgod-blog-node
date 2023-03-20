@@ -1,7 +1,5 @@
 //----------------------------------------
 const mongodb = require('../lib/mongoDB')
-// 连接数据库
-mongodb.connect()
 // 创建表模块
 let Schema = mongodb.mongoose.Schema
 // 新增文章表

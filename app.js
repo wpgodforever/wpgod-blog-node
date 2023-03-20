@@ -11,6 +11,9 @@ const article = require('./router/article')
 const comment = require('./router/comment')
 // 引入jwt校验模块
 const { expressjwt } = require('./lib/expressJwt')
+const mongodb = require('./lib/mongoDB')
+// 连接数据库
+mongodb.connect()
 //----------------------------------------
 // 用于处理跨域
 app.use(cors())

@@ -1,6 +1,5 @@
 const express = require('express')
 const { createToken } = require('../lib/token')
-const app = express()
 const router = express.Router()
 const { User } = require('../models/user')
 const { responseClient } = require('../lib/request')

@@ -1,7 +1,4 @@
 const express = require('express')
-const { port, baseUrl } = require('../lib/config')
-const fs=require('fs')
-const app = express()
 const router = express.Router()
 const { Comment, Reply } = require('../models/comment')
 const { responseClient } = require('../lib/request')
