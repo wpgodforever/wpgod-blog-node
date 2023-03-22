@@ -192,12 +192,13 @@ router.get('/detail', (req, res) => {
 
 // 文章列表接口
 router.get('/list', async (req, res) => {
-    const { pageSize = 10, pageNo = 1, tags = '' } = req.query
+    const { pageSize = 10, pageNo = 1, tags = [] } = req.query
+    console.log(tags,'tags')
     // 查询出已有的所有标签
     const tagsArr = await Tags.find({}, { _id: 0, __v: 0 }, { lean: true })
     const tagsArr1 = tagsArr.map(v => v.tag)
     // 获取前端传来想查的标签
-    const tagsArrNew = tags ? tags.split(',') : []
+    const tagsArrNew = tags.length>0 ? tags : []
     // 因为有可能是查询全部，tags可能为空，所以做一个3元判断
     // 分页
     // .skip((+pageNo -1)*(+pageSize)).limit(+pageSize)
@@ -212,7 +213,8 @@ router.get('/list', async (req, res) => {
         responseClient(res, 200, 200, '查询成功',
             {
                 list: [...articleRes],
-                tagsNum: tagsArr.length
+                tagsNum: tagsArr.length,
+                tags:tagsArr1
             })
     })
 })
