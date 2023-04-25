@@ -199,22 +199,25 @@ router.get('/list', async (req, res) => {
     const tagsArr1 = tagsArr.map(v => v.tag)
     // 获取前端传来想查的标签
     const tagsArrNew = tags.length>0 ? tags : []
-    // 因为有可能是查询全部，tags可能为空，所以做一个3元判断
-    // 分页
-    // .skip((+pageNo -1)*(+pageSize)).limit(+pageSize)
+
+    // 查询文章总数
+    const totalCount = await Article.countDocuments();
+
     Article.find({
         tags: { $in: (tagsArrNew.length ? tagsArrNew : tagsArr1) }
     }, {
         author:0
     }).sort({
         'createdAt':-1
-    }).then((articleRes, articleReq) => {
+    }).skip((+pageNo -1)*(+pageSize)).limit(+pageSize).then((articleRes, articleReq) => {
+        console.log(totalCount)
         if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
         responseClient(res, 200, 200, '查询成功',
             {
                 list: [...articleRes],
                 tagsNum: tagsArr.length,
-                tags:tagsArr1
+                tags:tagsArr1,
+                total:totalCount
             })
     })
 })
