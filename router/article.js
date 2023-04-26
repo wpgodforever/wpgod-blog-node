@@ -78,7 +78,7 @@ router.post('/uploadImg/cover', uploadCover.single("file"), (req, res) => {
 // 发布文章接口
 router.post('/post', isAdmin, (req, res) => {
     console.log(req.body)
-    const { title, tags, desc, cover, text, author,isTop } = req.body
+    const { title, tags, desc, cover, text, author, isTop } = req.body
     // 先看看文章标签表里面有没有新增的没有的标签
     Tags.find({}, { _id: 0, __v: 0 }, { lean: true }).then(tagRes => {
 
@@ -152,72 +152,82 @@ router.get('/detail', (req, res) => {
         {
             path: 'coms',
             model: 'Comment',
-            options:{
-                sort:{
-                    'createdAt':-1
+            options: {
+                sort: {
+                    'createdAt': -1
                 }
             },
-            populate:[{
+            populate: [{
                 path: 'replys',
                 model: 'Reply',
-                options:{
-                    sort:{
-                        'createdAt':-1
+                options: {
+                    sort: {
+                        'createdAt': -1
                     }
                 },
-                populate:[{
+                populate: [{
                     path: 'reply_user_id',
                     select: 'username',
                     model: 'User',
-                },{
+                }, {
                     path: 'get_reply_user_id',
                     select: 'username',
                     model: 'User',
                 },]
-            },{
+            }, {
                 path: 'reply_user_id',
                 select: 'username',
                 model: 'User',
-                
+
             }]
         },
     ])
-    .then((articleRes, articleReq) => {
-        if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
-        responseClient(res, 200, 200, '查询成功', articleRes)
-    }).catch(err => {
-        responseClient(res, 200, 400, '错误', err)
-    })
+        .then((articleRes, articleReq) => {
+            if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
+            responseClient(res, 200, 200, '查询成功', articleRes)
+        }).catch(err => {
+            responseClient(res, 200, 400, '错误', err)
+        })
 })
 
 // 文章列表接口
 router.get('/list', async (req, res) => {
     const { pageSize = 10, pageNo = 1, tags = [] } = req.query
-    console.log(tags,'tags')
+    console.log(tags, 'tags')
     // 查询出已有的所有标签
     const tagsArr = await Tags.find({}, { _id: 0, __v: 0 }, { lean: true })
     const tagsArr1 = tagsArr.map(v => v.tag)
     // 获取前端传来想查的标签
-    const tagsArrNew = tags.length>0 ? tags : []
+    const tagsArrNew = tags.length > 0 ? tags : []
 
     // 查询文章总数
-    const totalCount = await Article.countDocuments();
+    const totalCount = await Article.countDocuments({tags: { $in: (tagsArrNew.length ? tagsArrNew : tagsArr1) }});
 
+    let topList = []
+    
+    if(+pageNo === 1){
+        topList = await Article.find({
+            isTop: 1
+        }, {
+            author: 0
+        })
+    }
     Article.find({
-        tags: { $in: (tagsArrNew.length ? tagsArrNew : tagsArr1) }
+        tags: { $in: (tagsArrNew.length ? tagsArrNew : tagsArr1) },
+        isTop: 0
     }, {
-        author:0
+        author: 0
     }).sort({
-        'createdAt':-1
-    }).skip((+pageNo -1)*(+pageSize)).limit(+pageSize).then((articleRes, articleReq) => {
-        console.log(totalCount)
+        'createdAt': -1
+    }).skip((+pageNo - 1) * (+pageSize)).limit(+pageSize).then((articleRes, articleReq) => {
+        console.log(topList)
         if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
         responseClient(res, 200, 200, '查询成功',
             {
-                list: [...articleRes],
+                list: [...topList,...articleRes],
                 tagsNum: tagsArr.length,
-                tags:tagsArr1,
-                total:totalCount
+                tags: tagsArr1,
+                total: totalCount
             })
     })
 })
@@ -229,7 +239,7 @@ router.get('/tags', async (req, res) => {
     tagsArr = tagsArr.map(v => {
         return v.tag
     })
-    responseClient(res, 200, 200, '查询成功',tagsArr)
+    responseClient(res, 200, 200, '查询成功', tagsArr)
 })
 
 module.exports = router
