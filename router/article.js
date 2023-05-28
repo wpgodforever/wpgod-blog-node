@@ -199,34 +199,53 @@ router.get('/list', async (req, res) => {
     // 获取前端传来想查的标签
     const tagsArrNew = tags.length>0 ? tags : []
 
+    let topList = []
+    if(pageNo == 1){
+        Article.find({
+            isTop: 1
+        }, {
+            author:0
+        }).sort({
+            'createdAt':-1
+        }).then((articleRes, articleReq) => {
+            topList = [...articleRes]
+                
+        })
+    }
+    
+
     // 查询文章总数
     const totalCount = await Article.countDocuments();
+    // 查询当前条件下的文章总数
+    const listTotalCount = await Article.countDocuments({
+        tags: { $in: (tagsArrNew.length ? tagsArrNew : tagsArr1) },
+        title:{$regex:title},
+        isTop: 0
+    });
 
     Article.find({
         tags: { $in: (tagsArrNew.length ? tagsArrNew : tagsArr1) },
-        title:{$regex:title}
+        title:{$regex:title},
+        isTop: 0
     }, {
         author:0
     }).sort({
         'createdAt':-1
     }).skip((+pageNo -1)*(+pageSize)).limit(+pageSize).then((articleRes, articleReq) => {
-        console.log(totalCount)
         if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
         responseClient(res, 200, 200, '查询成功',
             {
-                list: [...articleRes],
+                list: [...topList,...articleRes],
                 tagsNum: tagsArr.length,
                 tags:tagsArr1,
-                total:totalCount
+                total:totalCount,
+                listTotalCount:listTotalCount
             })
     })
 })
 // 文章标题列表接口
 router.get('/listTitle', async (req, res) => {
     const { title } = req.query
-
-    // 查询文章总数
-    const totalCount = await Article.countDocuments();
 
     Article.find({
         title:{$regex:title}
@@ -238,8 +257,7 @@ router.get('/listTitle', async (req, res) => {
         if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
         responseClient(res, 200, 200, '查询成功',
             {
-                list: [...articleRes],
-                total:totalCount
+                list: [...articleRes]
             })
     })
 })
