@@ -192,8 +192,7 @@ router.get('/detail', (req, res) => {
 
 // 文章列表接口
 router.get('/list', async (req, res) => {
-    const { pageSize = 10, pageNo = 1, tags = [] } = req.query
-    console.log(tags, 'tags')
+    const { pageSize = 10, pageNo = 1, tags = [], title = '' } = req.query
     // 查询出已有的所有标签
     const tagsArr = await Tags.find({}, { _id: 0, __v: 0 }, { lean: true })
     const tagsArr1 = tagsArr.map(v => v.tag)
@@ -201,10 +200,15 @@ router.get('/list', async (req, res) => {
     const tagsArrNew = tags.length > 0 ? tags : []
 
     // 查询文章总数
-    const totalCount = await Article.countDocuments({tags: { $in: (tagsArrNew.length ? tagsArrNew : tagsArr1) }});
+    const totalCount = await Article.countDocuments();
+    // 查询当前条件下的文章总数
+    const listTotalCount = await Article.countDocuments({
+        tags: { $in: (tagsArrNew.length ? tagsArrNew : tagsArr1) },
+        title:{$regex:title},
+        isTop: 0
+    });
 
     let topList = []
-    
     if(+pageNo === 1){
         topList = await Article.find({
             isTop: 1
@@ -214,20 +218,39 @@ router.get('/list', async (req, res) => {
     }
     Article.find({
         tags: { $in: (tagsArrNew.length ? tagsArrNew : tagsArr1) },
+        title:{$regex:title},
         isTop: 0
     }, {
         author: 0
     }).sort({
-        'createdAt': -1
-    }).skip((+pageNo - 1) * (+pageSize)).limit(+pageSize).then((articleRes, articleReq) => {
-        console.log(topList)
+        'createdAt':-1
+    }).skip((+pageNo -1)*(+pageSize)).limit(+pageSize).then((articleRes, articleReq) => {
         if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
         responseClient(res, 200, 200, '查询成功',
             {
                 list: [...topList,...articleRes],
                 tagsNum: tagsArr.length,
-                tags: tagsArr1,
-                total: totalCount
+                tags:tagsArr1,
+                total:totalCount,
+                listTotalCount:listTotalCount
+            })
+    })
+})
+// 文章标题列表接口
+router.get('/listTitle', async (req, res) => {
+    const { title } = req.query
+
+    Article.find({
+        title:{$regex:title}
+    }, {
+        author:0
+    }).sort({
+        'createdAt':-1
+    }).then((articleRes, articleReq) => {
+        if (!articleRes) return responseClient(res, 200, 400, '没找到该文章')
+        responseClient(res, 200, 200, '查询成功',
+            {
+                list: [...articleRes]
             })
     })
 })
